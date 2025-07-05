@@ -4,37 +4,8 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
 import { Transaction } from "@/types/transaction";
-
-const categories = [
-  "Food & Dining",
-  "Transportation",
-  "Shopping",
-  "Entertainment",
-  "Healthcare",
-  "Education",
-  "Housing",
-  "Utilities",
-  "Insurance",
-  "Investment",
-  "Salary",
-  "Freelance",
-  "Other",
-];
-
-const transactionTypes = [
-  { value: "expense", label: "Expense", color: "destructive" },
-  { value: "income", label: "Income", color: "default" },
-];
 
 interface TransactionFormProps {
   transaction?: Transaction;
@@ -48,96 +19,70 @@ export default function TransactionForm({
   onCancel,
 }: TransactionFormProps) {
   const [formData, setFormData] = useState({
-    title: transaction?.title || "",
     amount: transaction?.amount || "",
-    type: transaction?.type || "expense",
-    category: transaction?.category || "",
     date: transaction?.date
       ? new Date(transaction.date).toISOString().split("T")[0]
       : new Date().toISOString().split("T")[0],
     description: transaction?.description || "",
   });
 
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.amount || parseFloat(formData.amount) <= 0) {
+      newErrors.amount = "Amount must be greater than 0";
+    }
+
+    if (!formData.date) {
+      newErrors.date = "Date is required";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
     const transactionData = {
-      ...formData,
       amount: parseFloat(formData.amount),
       date: new Date(formData.date),
+      description: formData.description || undefined,
     };
+
     onSubmit?.(transactionData);
   };
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: "" }));
+    }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="title">Title</Label>
-          <Input
-            id="title"
-            value={formData.title}
-            onChange={(e) => handleInputChange("title", e.target.value)}
-            placeholder="Enter transaction title"
-            required
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="amount">Amount</Label>
-          <Input
-            id="amount"
-            type="number"
-            step="0.01"
-            value={formData.amount}
-            onChange={(e) => handleInputChange("amount", e.target.value)}
-            placeholder="0.00"
-            required
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="type">Type</Label>
-          <Select
-            value={formData.type}
-            onValueChange={(value) => handleInputChange("type", value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select type" />
-            </SelectTrigger>
-            <SelectContent>
-              {transactionTypes.map((type) => (
-                <SelectItem key={type.value} value={type.value}>
-                  <Badge variant={type.color as any}>{type.label}</Badge>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="category">Category</Label>
-          <Select
-            value={formData.category}
-            onValueChange={(value) => handleInputChange("category", value)}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select category" />
-            </SelectTrigger>
-            <SelectContent>
-              {categories.map((category) => (
-                <SelectItem key={category} value={category}>
-                  {category}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+      <div className="space-y-2">
+        <Label htmlFor="amount">Amount</Label>
+        <Input
+          id="amount"
+          type="number"
+          step="0.01"
+          value={formData.amount}
+          onChange={(e) => handleInputChange("amount", e.target.value)}
+          placeholder="0.00"
+          className={errors.amount ? "border-red-500" : ""}
+        />
+        {errors.amount && (
+          <p className="text-sm text-red-500">{errors.amount}</p>
+        )}
       </div>
 
       <div className="space-y-2">
@@ -147,8 +92,9 @@ export default function TransactionForm({
           type="date"
           value={formData.date}
           onChange={(e) => handleInputChange("date", e.target.value)}
-          required
+          className={errors.date ? "border-red-500" : ""}
         />
+        {errors.date && <p className="text-sm text-red-500">{errors.date}</p>}
       </div>
 
       <div className="space-y-2">

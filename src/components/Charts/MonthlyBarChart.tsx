@@ -1,12 +1,21 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 import { Transaction } from "@/types/transaction";
 
 interface ChartData {
   month: string;
-  income: number;
-  expenses: number;
+  amount: number;
+  transactionCount: number;
 }
 
 export default function MonthlyBarChart() {
@@ -34,14 +43,11 @@ export default function MonthlyBarChart() {
         });
 
         if (!acc[monthKey]) {
-          acc[monthKey] = { month: monthName, income: 0, expenses: 0 };
+          acc[monthKey] = { month: monthName, amount: 0, transactionCount: 0 };
         }
 
-        if (transaction.type === "income") {
-          acc[monthKey].income += transaction.amount;
-        } else {
-          acc[monthKey].expenses += transaction.amount;
-        }
+        acc[monthKey].amount += transaction.amount;
+        acc[monthKey].transactionCount += 1;
 
         return acc;
       }, {} as Record<string, ChartData>);
@@ -80,59 +86,47 @@ export default function MonthlyBarChart() {
     );
   }
 
-  const maxValue = Math.max(...data.map((d) => Math.max(d.income, d.expenses)));
+  const formatTooltip = (value: number, name: string) => {
+    if (name === "amount") {
+      return [`$${value.toFixed(2)}`, "Total Amount"];
+    }
+    return [value, "Transactions"];
+  };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-center gap-4 text-sm">
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-green-500 rounded"></div>
-          <span>Income</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-red-500 rounded"></div>
-          <span>Expenses</span>
-        </div>
-      </div>
+    <div className="w-full h-64">
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart
+          data={data}
+          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis
+            dataKey="month"
+            tick={{ fontSize: 12 }}
+            angle={-45}
+            textAnchor="end"
+            height={60}
+          />
+          <YAxis
+            tick={{ fontSize: 12 }}
+            tickFormatter={(value) => `$${value}`}
+          />
+          <Tooltip
+            formatter={formatTooltip}
+            labelStyle={{ color: "#374151" }}
+          />
+          <Bar
+            dataKey="amount"
+            fill="#3B82F6"
+            radius={[4, 4, 0, 0]}
+            name="Total Amount"
+          />
+        </BarChart>
+      </ResponsiveContainer>
 
-      <div className="space-y-2">
-        {data.map((item, index) => (
-          <div key={index} className="space-y-1">
-            <div className="flex items-center justify-between text-sm">
-              <span className="font-medium">{item.month}</span>
-              <span className="text-muted-foreground">
-                Net: ${(item.income - item.expenses).toFixed(2)}
-              </span>
-            </div>
-
-            <div className="flex gap-1 h-6">
-              {/* Income bar */}
-              <div
-                className="bg-green-500 rounded-l transition-all duration-300"
-                style={{
-                  width: `${(item.income / maxValue) * 100}%`,
-                  minWidth: item.income > 0 ? "4px" : "0",
-                }}
-                title={`Income: $${item.income.toFixed(2)}`}
-              />
-
-              {/* Expenses bar */}
-              <div
-                className="bg-red-500 rounded-r transition-all duration-300"
-                style={{
-                  width: `${(item.expenses / maxValue) * 100}%`,
-                  minWidth: item.expenses > 0 ? "4px" : "0",
-                }}
-                title={`Expenses: $${item.expenses.toFixed(2)}`}
-              />
-            </div>
-
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <span>Income: ${item.income.toFixed(2)}</span>
-              <span>Expenses: ${item.expenses.toFixed(2)}</span>
-            </div>
-          </div>
-        ))}
+      <div className="mt-4 text-center text-sm text-muted-foreground">
+        Monthly Transaction Amounts
       </div>
     </div>
   );

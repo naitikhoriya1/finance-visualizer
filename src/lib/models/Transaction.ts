@@ -1,10 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface ITransaction extends Document {
-  title: string;
   amount: number;
-  type: "income" | "expense";
-  category: string;
   date: Date;
   description?: string;
   createdAt: Date;
@@ -13,29 +10,10 @@ export interface ITransaction extends Document {
 
 const TransactionSchema = new Schema<ITransaction>(
   {
-    title: {
-      type: String,
-      required: [true, "Title is required"],
-      trim: true,
-      maxlength: [100, "Title cannot be more than 100 characters"],
-    },
     amount: {
       type: Number,
       required: [true, "Amount is required"],
       min: [0, "Amount cannot be negative"],
-    },
-    type: {
-      type: String,
-      required: [true, "Type is required"],
-      enum: {
-        values: ["income", "expense"],
-        message: "Type must be either income or expense",
-      },
-    },
-    category: {
-      type: String,
-      required: [true, "Category is required"],
-      trim: true,
     },
     date: {
       type: Date,

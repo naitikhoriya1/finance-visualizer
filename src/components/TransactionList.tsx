@@ -2,16 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Transaction } from "@/types/transaction";
 import TransactionForm from "./TransactionForm";
 
@@ -20,8 +12,6 @@ export default function TransactionList() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState({
     search: "",
-    type: "all",
-    category: "all",
   });
   const [editingTransaction, setEditingTransaction] =
     useState<Transaction | null>(null);
@@ -87,19 +77,11 @@ export default function TransactionList() {
 
   const filteredTransactions = transactions.filter((transaction) => {
     const matchesSearch =
-      transaction.title.toLowerCase().includes(filter.search.toLowerCase()) ||
       transaction.description
         ?.toLowerCase()
-        .includes(filter.search.toLowerCase());
-    const matchesType =
-      filter.type === "all" || transaction.type === filter.type;
-    const matchesCategory =
-      filter.category === "all" || transaction.category === filter.category;
-
-    return matchesSearch && matchesType && matchesCategory;
+        .includes(filter.search.toLowerCase()) || false;
+    return matchesSearch;
   });
-
-  const categories = [...new Set(transactions.map((t) => t.category))];
 
   if (loading) {
     return <div className="text-center py-8">Loading transactions...</div>;
@@ -107,50 +89,16 @@ export default function TransactionList() {
 
   return (
     <div className="space-y-4">
-      {/* Filters */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Search Filter */}
+      <div className="flex gap-4">
         <Input
-          placeholder="Search transactions..."
+          placeholder="Search by description..."
           value={filter.search}
           onChange={(e) =>
             setFilter((prev) => ({ ...prev, search: e.target.value }))
           }
+          className="flex-1"
         />
-
-        <Select
-          value={filter.type}
-          onValueChange={(value) =>
-            setFilter((prev) => ({ ...prev, type: value }))
-          }
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Filter by type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Types</SelectItem>
-            <SelectItem value="income">Income</SelectItem>
-            <SelectItem value="expense">Expense</SelectItem>
-          </SelectContent>
-        </Select>
-
-        <Select
-          value={filter.category}
-          onValueChange={(value) =>
-            setFilter((prev) => ({ ...prev, category: value }))
-          }
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Filter by category" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Categories</SelectItem>
-            {categories.map((category) => (
-              <SelectItem key={category} value={category}>
-                {category}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
       </div>
 
       {/* Transaction List */}
@@ -171,17 +119,9 @@ export default function TransactionList() {
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-medium">{transaction.title}</h3>
-                      <Badge
-                        variant={
-                          transaction.type === "income"
-                            ? "default"
-                            : "destructive"
-                        }
-                      >
-                        {transaction.type}
-                      </Badge>
-                      <Badge variant="outline">{transaction.category}</Badge>
+                      <span className="font-bold text-lg text-blue-600">
+                        ${transaction.amount.toFixed(2)}
+                      </span>
                     </div>
                     {transaction.description && (
                       <p className="text-sm text-muted-foreground mb-2">
@@ -193,34 +133,21 @@ export default function TransactionList() {
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={`font-bold text-lg ${
-                        transaction.type === "income"
-                          ? "text-green-600"
-                          : "text-red-600"
-                      }`}
+                  <div className="flex gap-1">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setEditingTransaction(transaction)}
                     >
-                      {transaction.type === "income" ? "+" : "-"}$
-                      {transaction.amount.toFixed(2)}
-                    </span>
-
-                    <div className="flex gap-1">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setEditingTransaction(transaction)}
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        onClick={() => handleDelete(transaction._id)}
-                      >
-                        Delete
-                      </Button>
-                    </div>
+                      Edit
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => handleDelete(transaction._id)}
+                    >
+                      Delete
+                    </Button>
                   </div>
                 </div>
               </CardContent>
