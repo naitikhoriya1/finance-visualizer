@@ -1,184 +1,187 @@
-# Finance Visualizer
+# 💸 Finance Visualizer
 
-A modern web application for tracking personal finances with beautiful visualizations and insights.
+![Finance Visualizer Banner](public/finance-visualizer-banner.png)
 
-## Features
+<p align="center">
+  <img src="https://img.shields.io/badge/Next.js-15-blue?logo=nextdotjs" />
+  <img src="https://img.shields.io/badge/MongoDB-8.x-green?logo=mongodb" />
+  <img src="https://img.shields.io/badge/shadcn--ui-Tailwind-blueviolet" />
+  <img src="https://img.shields.io/badge/Responsive-Design-brightgreen" />
+  <img src="https://img.shields.io/badge/TypeScript-5.x-blue?logo=typescript" />
+</p>
 
-- 📊 **Dashboard**: Summary cards and interactive charts
-- 💰 **Transaction Management**: Add, edit, and delete transactions
-- 📈 **Visual Analytics**: Monthly bar charts, category pie charts, and budget comparisons
-- 🎯 **Budget Tracking**: Set and monitor category budgets
-- 🔍 **Search & Filter**: Find transactions quickly with advanced filtering
+---
 
-## Tech Stack
+## 🚀 Project Overview
 
-- **Frontend**: Next.js 15, React 19, TypeScript
-- **Styling**: Tailwind CSS, shadcn/ui components
-- **Database**: MongoDB with Mongoose ODM
-- **Charts**: Custom SVG-based visualizations
-- **Icons**: Lucide React
+**Finance Visualizer** is a modern, full-stack web app for tracking your expenses, setting monthly budgets, and visualizing your financial health with beautiful charts and insights.
 
-## Project Structure
+- 📊 **Dashboard** with real-time analytics
+- 💰 **Transactions** tracking with categories
+- 🎯 **Budgets** per category per month
+- 🥧 **Pie & Bar Charts** for spending breakdown
+- 🧠 **Smart Insights** (e.g., "You've exceeded your budget in Food by ₹1,200")
+- 📱 **Responsive**: Works on mobile & desktop
 
-```
-finance-visualizer/
-├── src/
-│   ├── app/
-│   │   ├── dashboard/          # Dashboard page with charts
-│   │   ├── transactions/       # Transaction management page
-│   │   ├── api/
-│   │   │   ├── transactions/   # Transaction CRUD API
-│   │   │   └── budgets/        # Budget CRUD API
-│   │   ├── layout.tsx          # Root layout with navigation
-│   │   └── page.tsx            # Home page
-│   ├── components/
-│   │   ├── ui/                 # shadcn/ui components
-│   │   ├── Charts/             # Chart components
-│   │   │   ├── MonthlyBarChart.tsx
-│   │   │   ├── CategoryPieChart.tsx
-│   │   │   └── BudgetComparisonChart.tsx
-│   │   ├── TransactionForm.tsx # Transaction form component
-│   │   ├── TransactionList.tsx # Transaction list component
-│   │   └── Navigation.tsx      # Main navigation
-│   ├── lib/
-│   │   ├── db.ts              # MongoDB connection
-│   │   └── models/
-│   │       ├── Transaction.ts  # Transaction model
-│   │       └── Budget.ts       # Budget model
-│   └── types/
-│       ├── transaction.ts      # Transaction type definitions
-│       └── budget.ts           # Budget type definitions
-├── public/
-│   └── images/                 # Static images
-└── package.json
-```
+---
 
-## Getting Started
+## ✨ Features
 
-### Prerequisites
+- [x] Add, edit, delete transactions
+- [x] Set monthly budgets by category
+- [x] Dashboard with summary cards
+- [x] Category-wise pie chart
+- [x] Budget vs Actual bar chart
+- [x] Spending insights (over/under budget)
+- [x] Search, filter, and responsive navigation
+- [x] Modern UI with shadcn/ui & Tailwind CSS
 
-- Node.js 18+
-- MongoDB (local or cloud)
+---
 
-### Installation
-
-1. Clone the repository:
-
-```bash
-git clone <repository-url>
-cd finance-visualizer
-```
-
-2. Install dependencies:
-
-```bash
-npm install
-```
-
-3. Set up environment variables:
-   Create a `.env.local` file in the root directory:
-
-```env
-MONGODB_URI=mongodb://localhost:27017/finance-visualizer
-# or for MongoDB Atlas:
-# MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/finance-visualizer
-```
-
-4. Run the development server:
-
-```bash
-npm run dev
-```
-
-5. Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-## API Endpoints
-
-### Transactions
-
-- `GET /api/transactions` - Get all transactions
-- `POST /api/transactions` - Create a new transaction
-- `PUT /api/transactions` - Update a transaction
-- `DELETE /api/transactions?id=<id>` - Delete a transaction
-
-### Budgets
-
-- `GET /api/budgets` - Get all active budgets
-- `POST /api/budgets` - Create a new budget
-- `PUT /api/budgets` - Update a budget
-- `DELETE /api/budgets?id=<id>` - Delete a budget
-
-## Data Models
-
-### Transaction
-
-```typescript
-{
-  _id: string;
-  title: string;
-  amount: number;
-  type: 'income' | 'expense';
-  category: string;
-  date: Date;
-  description?: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-```
-
-### Budget
-
-```typescript
-{
-  _id: string;
-  category: string;
-  amount: number;
-  period: 'monthly' | 'yearly';
-  startDate: Date;
-  endDate?: Date;
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-}
-```
-
-## Features in Detail
+## 🖼️ Screenshots
 
 ### Dashboard
 
-- Summary cards showing total income, expenses, net savings, and budget status
-- Monthly bar chart comparing income vs expenses
-- Category pie chart showing expense distribution
-- Budget comparison chart tracking actual vs planned spending
+![Dashboard Screenshot](public/screens/dashboard.png)
 
-### Transaction Management
+### Transactions
 
-- Add new transactions with title, amount, type, category, and date
-- Edit existing transactions inline
-- Delete transactions with confirmation
-- Search and filter by type, category, and date range
-- Responsive design for mobile and desktop
+![Transactions Screenshot](public/screens/transactions.png)
 
-### Charts
+### Budgets
 
-- **Monthly Bar Chart**: Shows income and expenses by month with net calculations
-- **Category Pie Chart**: Displays expense distribution with percentages and amounts
-- **Budget Comparison**: Compares actual spending against budgeted amounts
+![Budgets Screenshot](public/screens/budgets.png)
 
-## Contributing
+### Mobile View
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+![Mobile Screenshot](public/screens/mobile.png)
 
-## License
+> _Replace these with your actual screenshots in the `public/screens/` folder._
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+---
 
-## Acknowledgments
+## 🛠️ Tech Stack
 
-- [shadcn/ui](https://ui.shadcn.com/) for the beautiful component library
-- [Radix UI](https://www.radix-ui.com/) for accessible primitives
-- [Tailwind CSS](https://tailwindcss.com/) for utility-first styling
+<p align="center">
+  <img src="https://skillicons.dev/icons?i=nextjs,react,typescript,mongodb,tailwind,vercel" height="32" />
+</p>
+
+- **Next.js 15** (App Router, API routes)
+- **MongoDB** (Mongoose ODM)
+- **shadcn/ui** (Radix + Tailwind components)
+- **Recharts** (for charts)
+- **TypeScript** (type safety)
+- **Vercel** (deployment-ready)
+
+---
+
+## 🧩 Animated Workflow
+
+```mermaid
+flowchart TD
+    A[User adds transaction] --> B[Transaction saved in MongoDB]
+    B --> C[Dashboard fetches data]
+    C --> D[Charts & Insights update]
+    D --> E[User sees real-time analytics]
+    E --> F[User sets budgets]
+    F --> G[Budget vs Actual chart updates]
+    C --> H[Spending by Category Pie Chart]
+    F --> I[Smart Insights generated]
+```
+
+---
+
+## 📝 How It Works
+
+1. **Add Transactions**: Enter amount, date, category, and description.
+2. **Set Budgets**: Choose a category, set a monthly limit.
+3. **Dashboard**: See total expenses, category breakdown, and budget vs actual.
+4. **Insights**: Get instant feedback if you're over or under budget.
+5. **Mobile Friendly**: Use on any device, anywhere.
+
+---
+
+## 📦 Installation & Setup
+
+```bash
+# 1. Clone the repo
+$ git clone https://github.com/yourusername/finance-visualizer.git
+$ cd finance-visualizer
+
+# 2. Install dependencies
+$ npm install
+
+# 3. Set up environment variables
+$ cp .env.example .env.local
+# Edit .env.local with your MongoDB URI
+
+# 4. Start the dev server
+$ npm run dev
+```
+
+---
+
+## 📚 Usage Guide
+
+- **Transactions**: Add, edit, delete, and search your expenses.
+- **Budgets**: Set monthly budgets for each category.
+- **Dashboard**: Visualize your spending and get actionable insights.
+- **Charts**: Interactive bar and pie charts for deep analysis.
+- **Insights**: See if you're on track or over budget, per category.
+
+---
+
+## 📊 Example Charts
+
+### Category Pie Chart
+
+![Pie Chart Example](public/screens/pie-chart.png)
+
+### Budget vs Actual Bar Chart
+
+![Bar Chart Example](public/screens/bar-chart.png)
+
+---
+
+## 📱 Responsive Design
+
+- Fully mobile-friendly
+- Hamburger menu for navigation
+- Touch-friendly forms and charts
+
+---
+
+## 🤝 Contributing
+
+1. Fork this repo
+2. Create a feature branch
+3. Commit your changes
+4. Open a pull request
+
+---
+
+## 📝 License
+
+MIT License. See [LICENSE](LICENSE) for details.
+
+---
+
+## 🙏 Credits
+
+- [shadcn/ui](https://ui.shadcn.com/)
+- [Recharts](https://recharts.org/)
+- [Radix UI](https://www.radix-ui.com/)
+- [Lucide Icons](https://lucide.dev/)
+- [Tailwind CSS](https://tailwindcss.com/)
+
+---
+
+## 🌟 Project Status
+
+> **Finance Visualizer** is production-ready and actively maintained. PRs and feedback welcome!
+
+---
+
+<p align="center">
+  <img src="public/finance-visualizer-banner.png" width="400" />
+</p>
