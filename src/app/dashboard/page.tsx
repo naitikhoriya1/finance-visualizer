@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import MonthlyBarChart from "@/components/Charts/MonthlyBarChart";
 import CategoryPieChart from "@/components/Charts/CategoryPieChart";
+import BudgetVsActualChart from "@/components/Charts/BudgetVsActualChart";
+import SpendingInsights from "@/components/SpendingInsights";
 import { Transaction } from "@/types/transaction";
 import { Badge } from "@/components/ui/badge";
 
@@ -122,6 +124,19 @@ export default function DashboardPage() {
         </CardHeader>
         <CardContent>
           <CategoryPieChart />
+        </CardContent>
+      </Card>
+
+      {/* Spending Insights */}
+      <SpendingInsights />
+
+      {/* Budget vs Actual Chart */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Budget vs Actual Spending</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <BudgetVsActualChart />
         </CardContent>
       </Card>
 

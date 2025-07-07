@@ -36,6 +36,15 @@ export default function CategoryPieChart() {
       const response = await fetch("/api/transactions");
       const transactions: Transaction[] = await response.json();
 
+      console.log("Fetched transactions:", transactions);
+
+      // Check if transactions is an array
+      if (!Array.isArray(transactions)) {
+        console.error("Transactions is not an array:", transactions);
+        setData([]);
+        return;
+      }
+
       // Group by category
       const categoryData = transactions.reduce((acc, transaction) => {
         if (!acc[transaction.category]) {
@@ -45,10 +54,14 @@ export default function CategoryPieChart() {
         return acc;
       }, {} as Record<string, number>);
 
+      console.log("Category data:", categoryData);
+
       const total = Object.values(categoryData).reduce(
         (sum, amount) => sum + amount,
         0
       );
+
+      console.log("Total amount:", total);
 
       const chartData: CategoryData[] = Object.entries(categoryData)
         .map(([category, amount], index) => ({
@@ -59,6 +72,7 @@ export default function CategoryPieChart() {
         }))
         .sort((a, b) => b.amount - a.amount);
 
+      console.log("Chart data:", chartData);
       setData(chartData);
     } catch (error) {
       console.error("Failed to fetch data for chart:", error);

@@ -16,8 +16,10 @@ export async function GET() {
   try {
     await connectDB();
     const transactions = await Transaction.find({}).sort({ date: -1 });
+    console.log("API: Found transactions:", transactions.length);
     return NextResponse.json(transactions);
   } catch (error) {
+    console.error("API: Error fetching transactions:", error);
     return NextResponse.json(
       { error: "Failed to fetch transactions" },
       { status: 500 }
@@ -70,8 +72,11 @@ export async function PUT(request: NextRequest) {
     const body = await request.json();
     const { id, ...updateData } = body;
 
+    console.log("PUT: Updating transaction", id, "with data:", updateData);
+
     const transaction = await Transaction.findByIdAndUpdate(id, updateData, {
       new: true,
+      runValidators: true,
     });
 
     if (!transaction) {
@@ -81,8 +86,10 @@ export async function PUT(request: NextRequest) {
       );
     }
 
+    console.log("PUT: Updated transaction:", transaction);
     return NextResponse.json(transaction);
   } catch (error) {
+    console.error("PUT: Error updating transaction:", error);
     return NextResponse.json(
       { error: "Failed to update transaction" },
       { status: 500 }
