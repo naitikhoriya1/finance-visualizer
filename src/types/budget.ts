@@ -1,32 +1,25 @@
+import { TransactionCategory } from "./transaction";
+
 export interface Budget {
   _id: string;
-  category: string;
+  category: TransactionCategory;
   amount: number;
-  period: "monthly" | "yearly";
-  startDate: Date | string;
-  endDate?: Date | string;
-  isActive: boolean;
+  month: string; // Format: "YYYY-MM"
   createdAt: Date | string;
   updatedAt: Date | string;
 }
 
 export interface CreateBudgetRequest {
-  category: string;
+  category: TransactionCategory;
   amount: number;
-  period?: "monthly" | "yearly";
-  startDate?: Date | string;
-  endDate?: Date | string;
-  isActive?: boolean;
+  month: string;
 }
 
 export interface UpdateBudgetRequest {
   id: string;
-  category?: string;
+  category?: TransactionCategory;
   amount?: number;
-  period?: "monthly" | "yearly";
-  startDate?: Date | string;
-  endDate?: Date | string;
-  isActive?: boolean;
+  month?: string;
 }
 
 export interface BudgetComparison {
@@ -39,12 +32,11 @@ export interface BudgetComparison {
 }
 
 export interface BudgetStats {
-  totalBudget: number;
-  totalSpent: number;
-  totalRemaining: number;
-  overBudgetCategories: number;
-  underBudgetCategories: number;
-  averageUtilization: number;
+  category: TransactionCategory;
+  budget: number;
+  spent: number;
+  remaining: number;
+  percentageUsed: number;
 }
 
 export interface BudgetPeriod {

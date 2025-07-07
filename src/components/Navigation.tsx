@@ -14,6 +14,7 @@ export default function Navigation() {
     { href: "/", label: "Home", icon: "🏠" },
     { href: "/dashboard", label: "Dashboard", icon: "📊" },
     { href: "/transactions", label: "Transactions", icon: "💰" },
+    { href: "/budgets", label: "Budgets", icon: "🎯" },
   ];
 
   const toggleMobileMenu = () => {

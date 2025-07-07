@@ -3,10 +3,7 @@ import mongoose, { Schema, Document } from "mongoose";
 export interface IBudget extends Document {
   category: string;
   amount: number;
-  period: "monthly" | "yearly";
-  startDate: Date;
-  endDate?: Date;
-  isActive: boolean;
+  month: string; // Format: "YYYY-MM"
   createdAt: Date;
   updatedAt: Date;
 }
@@ -16,40 +13,25 @@ const BudgetSchema = new Schema<IBudget>(
     category: {
       type: String,
       required: [true, "Category is required"],
-      trim: true,
-      unique: true,
+      enum: [
+        "Food",
+        "Rent",
+        "Utilities",
+        "Entertainment",
+        "Transport",
+        "Health",
+        "Other",
+      ],
     },
     amount: {
       type: Number,
       required: [true, "Amount is required"],
       min: [0, "Amount cannot be negative"],
     },
-    period: {
+    month: {
       type: String,
-      required: [true, "Period is required"],
-      enum: {
-        values: ["monthly", "yearly"],
-        message: "Period must be either monthly or yearly",
-      },
-      default: "monthly",
-    },
-    startDate: {
-      type: Date,
-      required: [true, "Start date is required"],
-      default: Date.now,
-    },
-    endDate: {
-      type: Date,
-      validate: {
-        validator: function (this: IBudget, value: Date) {
-          return !value || value > this.startDate;
-        },
-        message: "End date must be after start date",
-      },
-    },
-    isActive: {
-      type: Boolean,
-      default: true,
+      required: [true, "Month is required"],
+      match: [/^\d{4}-\d{2}$/, "Month must be in YYYY-MM format"],
     },
   },
   {
@@ -57,24 +39,12 @@ const BudgetSchema = new Schema<IBudget>(
   }
 );
 
-// Index for better query performance
-BudgetSchema.index({ category: 1 });
-BudgetSchema.index({ isActive: 1 });
-BudgetSchema.index({ startDate: 1, endDate: 1 });
+// Compound index to ensure unique budget per category per month
+BudgetSchema.index({ category: 1, month: 1 }, { unique: true });
 
 // Virtual for formatted amount
 BudgetSchema.virtual("formattedAmount").get(function () {
   return `$${this.amount.toFixed(2)}`;
-});
-
-// Virtual for remaining days (if endDate is set)
-BudgetSchema.virtual("remainingDays").get(function () {
-  if (!this.endDate) return null;
-  const now = new Date();
-  const end = new Date(this.endDate);
-  const diffTime = end.getTime() - now.getTime();
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  return Math.max(0, diffDays);
 });
 
 // Ensure virtuals are serialized
