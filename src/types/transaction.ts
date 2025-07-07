@@ -1,8 +1,28 @@
+export type TransactionCategory =
+  | "Food"
+  | "Rent"
+  | "Utilities"
+  | "Entertainment"
+  | "Transport"
+  | "Health"
+  | "Other";
+
+export const TRANSACTION_CATEGORIES: TransactionCategory[] = [
+  "Food",
+  "Rent",
+  "Utilities",
+  "Entertainment",
+  "Transport",
+  "Health",
+  "Other",
+];
+
 export interface Transaction {
   _id: string;
   amount: number;
   date: Date | string;
   description?: string;
+  category: TransactionCategory;
   createdAt: Date | string;
   updatedAt: Date | string;
 }
@@ -11,6 +31,7 @@ export interface CreateTransactionRequest {
   amount: number;
   date: Date | string;
   description?: string;
+  category: TransactionCategory;
 }
 
 export interface UpdateTransactionRequest {
@@ -18,6 +39,7 @@ export interface UpdateTransactionRequest {
   amount?: number;
   date?: Date | string;
   description?: string;
+  category?: TransactionCategory;
 }
 
 export interface TransactionFilters {

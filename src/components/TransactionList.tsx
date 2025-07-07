@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Transaction } from "@/types/transaction";
 import TransactionForm from "./TransactionForm";
+import { Badge } from "@/components/ui/badge";
 
 export default function TransactionList() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -24,7 +25,12 @@ export default function TransactionList() {
     try {
       const response = await fetch("/api/transactions");
       const data = await response.json();
-      setTransactions(data);
+      if (Array.isArray(data)) {
+        setTransactions(data);
+      } else {
+        setTransactions([]);
+        console.error("API did not return an array:", data);
+      }
     } catch (error) {
       console.error("Failed to fetch transactions:", error);
     } finally {
@@ -122,6 +128,9 @@ export default function TransactionList() {
                       <span className="font-bold text-lg text-blue-600">
                         ${transaction.amount.toFixed(2)}
                       </span>
+                      <Badge variant="outline" className="ml-2">
+                        {transaction.category}
+                      </Badge>
                     </div>
                     {transaction.description && (
                       <p className="text-sm text-muted-foreground mb-2">

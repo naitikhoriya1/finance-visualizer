@@ -1,6 +1,7 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import MonthlyBarChart from "@/components/Charts/MonthlyBarChart";
+import CategoryPieChart from "@/components/Charts/CategoryPieChart";
 
 export default function DashboardPage() {
   return (
@@ -11,7 +12,9 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Transactions</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Total Transactions
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-600">24</div>
@@ -31,7 +34,9 @@ export default function DashboardPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Average Transaction</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Average Transaction
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-purple-600">$343</div>
@@ -47,6 +52,16 @@ export default function DashboardPage() {
         </CardHeader>
         <CardContent>
           <MonthlyBarChart />
+        </CardContent>
+      </Card>
+
+      {/* Category Pie Chart */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Spending by Category</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <CategoryPieChart />
         </CardContent>
       </Card>
     </div>

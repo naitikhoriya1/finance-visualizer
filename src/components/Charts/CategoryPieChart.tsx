@@ -36,9 +36,8 @@ export default function CategoryPieChart() {
       const response = await fetch("/api/transactions");
       const transactions: Transaction[] = await response.json();
 
-      // Filter expenses and group by category
-      const expenses = transactions.filter((t) => t.type === "expense");
-      const categoryData = expenses.reduce((acc, transaction) => {
+      // Group by category
+      const categoryData = transactions.reduce((acc, transaction) => {
         if (!acc[transaction.category]) {
           acc[transaction.category] = 0;
         }

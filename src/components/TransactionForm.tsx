@@ -5,7 +5,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Transaction } from "@/types/transaction";
+import {
+  Transaction,
+  TRANSACTION_CATEGORIES,
+  TransactionCategory,
+} from "@/types/transaction";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 
 interface TransactionFormProps {
   transaction?: Transaction;
@@ -24,9 +35,15 @@ export default function TransactionForm({
       ? new Date(transaction.date).toISOString().split("T")[0]
       : new Date().toISOString().split("T")[0],
     description: transaction?.description || "",
+    category: (transaction?.category as TransactionCategory) || "Other",
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -39,24 +56,52 @@ export default function TransactionForm({
       newErrors.date = "Date is required";
     }
 
+    if (!formData.category) {
+      newErrors.category = "Category is required";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!validateForm()) {
       return;
     }
 
+    setIsSubmitting(true);
+    setSubmitMessage(null);
+
     const transactionData = {
       amount: parseFloat(formData.amount),
       date: new Date(formData.date),
       description: formData.description || undefined,
+      category: formData.category as TransactionCategory,
     };
 
-    onSubmit?.(transactionData);
+    try {
+      await onSubmit?.(transactionData);
+      setSubmitMessage({
+        type: "success",
+        text: "Transaction added successfully!",
+      });
+      // Reset form
+      setFormData({
+        amount: "",
+        date: new Date().toISOString().split("T")[0],
+        description: "",
+        category: "Other",
+      });
+    } catch (error) {
+      setSubmitMessage({
+        type: "error",
+        text: "Failed to add transaction. Please try again.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -98,6 +143,28 @@ export default function TransactionForm({
       </div>
 
       <div className="space-y-2">
+        <Label htmlFor="category">Category</Label>
+        <Select
+          value={formData.category}
+          onValueChange={(value) => handleInputChange("category", value)}
+        >
+          <SelectTrigger id="category">
+            <SelectValue placeholder="Select category" />
+          </SelectTrigger>
+          <SelectContent>
+            {TRANSACTION_CATEGORIES.map((cat) => (
+              <SelectItem key={cat} value={cat}>
+                {cat}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {errors.category && (
+          <p className="text-sm text-red-500">{errors.category}</p>
+        )}
+      </div>
+
+      <div className="space-y-2">
         <Label htmlFor="description">Description (Optional)</Label>
         <Textarea
           id="description"
@@ -108,12 +175,33 @@ export default function TransactionForm({
         />
       </div>
 
+      {submitMessage && (
+        <div
+          className={`p-3 rounded-md ${
+            submitMessage.type === "success"
+              ? "bg-green-100 text-green-700 border border-green-200"
+              : "bg-red-100 text-red-700 border border-red-200"
+          }`}
+        >
+          {submitMessage.text}
+        </div>
+      )}
+
       <div className="flex gap-2">
-        <Button type="submit" className="flex-1">
-          {transaction ? "Update Transaction" : "Add Transaction"}
+        <Button type="submit" className="flex-1" disabled={isSubmitting}>
+          {isSubmitting
+            ? "Adding..."
+            : transaction
+            ? "Update Transaction"
+            : "Add Transaction"}
         </Button>
         {onCancel && (
-          <Button type="button" variant="outline" onClick={onCancel}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCancel}
+            disabled={isSubmitting}
+          >
             Cancel
           </Button>
         )}

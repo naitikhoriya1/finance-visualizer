@@ -4,6 +4,7 @@ export interface ITransaction extends Document {
   amount: number;
   date: Date;
   description?: string;
+  category: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -24,6 +25,20 @@ const TransactionSchema = new Schema<ITransaction>(
       type: String,
       trim: true,
       maxlength: [500, "Description cannot be more than 500 characters"],
+    },
+    category: {
+      type: String,
+      required: [true, "Category is required"],
+      default: "Other",
+      enum: [
+        "Food",
+        "Rent",
+        "Utilities",
+        "Entertainment",
+        "Transport",
+        "Health",
+        "Other",
+      ],
     },
   },
   {
