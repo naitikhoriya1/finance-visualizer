@@ -7,6 +7,13 @@ import { Input } from "@/components/ui/input";
 import { Transaction } from "@/types/transaction";
 import TransactionForm from "./TransactionForm";
 import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogClose,
+} from "@/components/ui/dialog";
 
 export default function TransactionList() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -165,21 +172,35 @@ export default function TransactionList() {
         )}
       </div>
 
-      {/* Edit Modal */}
-      {editingTransaction && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Edit Transaction</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <TransactionForm
-              transaction={editingTransaction}
-              onSubmit={handleEdit}
-              onCancel={() => setEditingTransaction(null)}
+      {/* Edit Modal as Bottom Sheet */}
+      <Dialog
+        open={!!editingTransaction}
+        onOpenChange={(open) => {
+          if (!open) setEditingTransaction(null);
+        }}
+      >
+        <DialogContent
+          showCloseButton={false}
+          className="fixed bottom-0 left-0 right-0 top-auto max-w-full rounded-t-2xl border-none p-0 shadow-2xl animate-slideUp sm:max-w-md sm:left-1/2 sm:translate-x-[-50%] sm:rounded-b-2xl sm:mb-4"
+        >
+          <DialogHeader className="p-4 border-b">
+            <DialogTitle>Edit Transaction</DialogTitle>
+            <DialogClose
+              className="absolute right-4 top-4 text-muted-foreground hover:text-foreground"
+              onClick={() => setEditingTransaction(null)}
             />
-          </CardContent>
-        </Card>
-      )}
+          </DialogHeader>
+          <div className="p-4">
+            {editingTransaction && (
+              <TransactionForm
+                transaction={editingTransaction}
+                onSubmit={handleEdit}
+                onCancel={() => setEditingTransaction(null)}
+              />
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
