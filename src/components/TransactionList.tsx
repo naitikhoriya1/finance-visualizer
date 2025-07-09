@@ -172,35 +172,34 @@ export default function TransactionList() {
         )}
       </div>
 
-      {/* Edit Modal as Bottom Sheet */}
-      <Dialog
-        open={!!editingTransaction}
-        onOpenChange={(open) => {
-          if (!open) setEditingTransaction(null);
-        }}
-      >
-        <DialogContent
-          showCloseButton={false}
-          className="fixed bottom-0 left-0 right-0 top-auto max-w-full rounded-t-2xl border-none p-0 shadow-2xl animate-slideUp sm:max-w-md sm:left-1/2 sm:translate-x-[-50%] sm:rounded-b-2xl sm:mb-4"
+      {/* Edit Modal */}
+      {editingTransaction && (
+        <Dialog
+          open={!!editingTransaction}
+          onOpenChange={(open) => {
+            if (!open) setEditingTransaction(null);
+          }}
         >
-          <DialogHeader className="p-4 border-b">
-            <DialogTitle>Edit Transaction</DialogTitle>
-            <DialogClose
-              className="absolute right-4 top-4 text-muted-foreground hover:text-foreground"
-              onClick={() => setEditingTransaction(null)}
+          <DialogContent
+            showCloseButton={true}
+            className="fixed bottom-0 left-0 right-0 top-auto mx-auto w-full max-w-md rounded-t-2xl p-6 animate-slideUp z-50 border-none shadow-2xl bg-background"
+            style={{
+              borderTopLeftRadius: "1rem",
+              borderTopRightRadius: "1rem",
+              paddingBottom: "env(safe-area-inset-bottom, 1.5rem)",
+            }}
+          >
+            <DialogHeader>
+              <DialogTitle>Edit Transaction</DialogTitle>
+            </DialogHeader>
+            <TransactionForm
+              transaction={editingTransaction}
+              onSubmit={handleEdit}
+              onCancel={() => setEditingTransaction(null)}
             />
-          </DialogHeader>
-          <div className="p-4">
-            {editingTransaction && (
-              <TransactionForm
-                transaction={editingTransaction}
-                onSubmit={handleEdit}
-                onCancel={() => setEditingTransaction(null)}
-              />
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }
